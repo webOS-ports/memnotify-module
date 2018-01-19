@@ -35,6 +35,7 @@
 #include <linux/spinlock.h>
 #include <linux/spinlock_types.h>
 #include <linux/timer.h>
+#include <linux/version.h>
 
 /*
  * How often [ms] information will be updated.
@@ -293,7 +294,11 @@ static int vm_shrink(struct shrinker __always_unused *sh,
 }
 
 static struct shrinker vm_shrinker = {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
+	.scan_objects = vm_shrink,
+#else
 	.shrink = vm_shrink,
+#endif
 	.seeks = DEFAULT_SEEKS
 };
 

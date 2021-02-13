@@ -280,8 +280,13 @@ static void timer_function(unsigned long __always_unused data)
 	mod_timer(&timer, jiffies + update_timer_jiffies);
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,12,0)
+static unsigned long vm_shrink(struct shrinker __always_unused *sh,
+		struct shrink_control __always_unused *sc)
+#else
 static int vm_shrink(struct shrinker __always_unused *sh,
 		struct shrink_control __always_unused *sc)
+#endif
 {
 	/* we are in reclaim mode - recheck memory situation later */
 	if (update_timer_jiffies != update_period_jiffies) {
